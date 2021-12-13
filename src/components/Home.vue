@@ -17,6 +17,10 @@
             <button class="btn green" @click="googleSignIn">
               Sign In with Google
             </button>
+            <br /><br />
+            <button class="btn green" @click="githubSignIn">
+              Sign In with GitHub
+            </button>
           </div>
         </div>
       </div>
@@ -29,6 +33,16 @@ import firebase from "firebase";
 
 export default {
   name: "Home",
+
+  mounted() {
+    if (
+      Object.keys(window.localStorage).filter((key) =>
+        key.includes("firebase:authUser")
+      ).length > 0
+    )
+      this.loggedIn = true;
+  },
+
   data: function () {
     return {
       name: null,
@@ -52,6 +66,16 @@ export default {
     },
     async googleSignIn() {
       const provider = new firebase.auth.GoogleAuthProvider();
+      try {
+        const response = await firebase.auth().signInWithPopup(provider);
+        console.log(response);
+        this.loggedIn = true;
+      } catch (error) {
+        alert(error);
+      }
+    },
+    async githubSignIn() {
+      const provider = new firebase.auth.GithubAuthProvider();
       try {
         const response = await firebase.auth().signInWithPopup(provider);
         console.log(response);
